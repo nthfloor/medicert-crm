@@ -4,8 +4,18 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
-import SignIn from "./pages/SignIn";
+import { Layout } from "./components/Layout";
+import Dashboard from "./pages/Dashboard";
+import ClassList from "./pages/ClassList";
+import ClassDetail from "./pages/ClassDetail";
+import StudentDirectory from "./pages/StudentDirectory";
+import StudentProfile from "./pages/StudentProfile";
+import StudentEventManagement from "./pages/StudentEventManagement";
+import Calendar from "./pages/Calendar";
+import Billing from "./pages/Billing";
+import ClientPortal from "./pages/ClientPortal";
+import Settings from "./pages/Settings";
+import ClassBooking from "./pages/ClassBooking";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -17,9 +27,19 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/signin" element={<SignIn />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          <Route path="/booking" element={<ClassBooking />} />
+          <Route path="/portal" element={<ClientPortal />} />
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Dashboard />} />
+            <Route path="classes" element={<ClassList />} />
+            <Route path="classes/:id" element={<ClassDetail />} />
+            <Route path="students" element={<StudentDirectory />} />
+            <Route path="students/:id" element={<StudentProfile />} />
+            <Route path="students/:id/events" element={<StudentEventManagement />} />
+            <Route path="calendar" element={<Calendar />} />
+            <Route path="billing" element={<Billing />} />
+            <Route path="settings" element={<Settings />} />
+          </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
