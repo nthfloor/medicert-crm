@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -49,7 +48,7 @@ const InstructorRegistration = () => {
     // Handle registration logic here
   };
 
-  const handleInputChange = (field: string, value: string | string[] | File | null) => {
+  const handleInputChange = (field: string, value: string | string[] | File | File[] | null) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
