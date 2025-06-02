@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { 
@@ -12,10 +11,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { 
-  ArrowLeft, 
   Calendar, 
   Clock, 
   MapPin, 
@@ -23,9 +20,11 @@ import {
   DollarSign,
   FileText,
   ChevronRight,
-  Filter,
   CheckCircle,
-  ChevronsUpDown
+  UserPlus,
+  GraduationCap,
+  Menu,
+  X
 } from "lucide-react";
 import {
   Select,
@@ -34,10 +33,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const ClassBooking = () => {
   const [selectedClass, setSelectedClass] = useState(null);
   const [selectedFilter, setSelectedFilter] = useState("all");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Mock data for class types
   const courseTypes = [
@@ -158,23 +164,105 @@ const ClassBooking = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        {/* Header */}
-        <div className="mb-8">
-          <Link to="/" className="inline-flex items-center text-sm text-indigo-600 hover:text-indigo-900 mb-4">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Home
-          </Link>
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">Book a Class</h1>
-              <p className="text-lg text-gray-600 mt-2">Find and register for advanced life support training classes</p>
-            </div>
-            <div>
-              <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl flex items-center justify-center">
+      {/* Updated Header with Navigation */}
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            {/* Logo */}
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl flex items-center justify-center">
                 <FileText className="w-6 h-6 text-white" />
               </div>
+              <div>
+                <h1 className="text-xl font-bold text-gray-900">Medicert</h1>
+                <p className="text-xs text-gray-500">Advanced Life Support Training</p>
+              </div>
             </div>
+
+            {/* Desktop Navigation */}
+            <nav className="hidden md:flex items-center space-x-6">
+              <Link to="/login" className="text-gray-600 hover:text-indigo-600 font-medium">
+                Sign In
+              </Link>
+              
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="border-indigo-200 text-indigo-600 hover:bg-indigo-50">
+                    <UserPlus className="w-4 h-4 mr-2" />
+                    Register
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem asChild>
+                    <Link to="/register/student" className="flex items-center w-full">
+                      <Users className="w-4 h-4 mr-2" />
+                      Student/Client
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/register/instructor" className="flex items-center w-full">
+                      <GraduationCap className="w-4 h-4 mr-2" />
+                      Instructor
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </nav>
+
+            {/* Mobile menu button */}
+            <div className="md:hidden">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              >
+                {mobileMenuOpen ? (
+                  <X className="w-6 h-6" />
+                ) : (
+                  <Menu className="w-6 h-6" />
+                )}
+              </Button>
+            </div>
+          </div>
+
+          {/* Mobile Navigation */}
+          {mobileMenuOpen && (
+            <div className="md:hidden border-t border-gray-200 py-4 space-y-2">
+              <Link 
+                to="/login" 
+                className="block px-3 py-2 text-gray-600 hover:text-indigo-600 font-medium"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Sign In
+              </Link>
+              <Link 
+                to="/register/student" 
+                className="block px-3 py-2 text-gray-600 hover:text-indigo-600 font-medium"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Register as Student/Client
+              </Link>
+              <Link 
+                to="/register/instructor" 
+                className="block px-3 py-2 text-gray-600 hover:text-indigo-600 font-medium"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Register as Instructor
+              </Link>
+            </div>
+          )}
+        </div>
+      </header>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        {/* Updated Hero Section */}
+        <div className="mb-8">
+          <div className="text-center mb-8">
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">Advanced Life Support Training</h1>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Find and register for professional medical certification courses. 
+              Expert instruction, hands-on training, and industry-recognized certifications.
+            </p>
           </div>
         </div>
 

@@ -18,6 +18,8 @@ import ClientPortal from "./pages/ClientPortal";
 import Settings from "./pages/Settings";
 import ClassBooking from "./pages/ClassBooking";
 import Login from "./pages/Login";
+import StudentRegistration from "./pages/StudentRegistration";
+import InstructorRegistration from "./pages/InstructorRegistration";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -29,10 +31,12 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
+          <Route path="/" element={<ClassBooking />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/booking" element={<ClassBooking />} />
+          <Route path="/register/student" element={<StudentRegistration />} />
+          <Route path="/register/instructor" element={<InstructorRegistration />} />
           <Route path="/portal" element={<ClientPortal />} />
-          <Route path="/" element={
+          <Route path="/admin" element={
             <ProtectedRoute>
               <Layout />
             </ProtectedRoute>
