@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Layout } from "./components/Layout";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 import Dashboard from "./pages/Dashboard";
 import ClassList from "./pages/ClassList";
 import ClassDetail from "./pages/ClassDetail";
@@ -16,6 +17,7 @@ import Billing from "./pages/Billing";
 import ClientPortal from "./pages/ClientPortal";
 import Settings from "./pages/Settings";
 import ClassBooking from "./pages/ClassBooking";
+import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -27,9 +29,14 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
+          <Route path="/login" element={<Login />} />
           <Route path="/booking" element={<ClassBooking />} />
           <Route path="/portal" element={<ClientPortal />} />
-          <Route path="/" element={<Layout />}>
+          <Route path="/" element={
+            <ProtectedRoute>
+              <Layout />
+            </ProtectedRoute>
+          }>
             <Route index element={<Dashboard />} />
             <Route path="classes" element={<ClassList />} />
             <Route path="classes/:id" element={<ClassDetail />} />
