@@ -45,7 +45,7 @@ export const Header = () => {
                   <User className="w-4 h-4" />
                 </div>
                 <span className="text-sm font-medium text-gray-700">
-                  {user?.given_name || 'User'}
+                  {user?.givenName || 'User'}
                 </span>
               </Button>
             </DropdownMenuTrigger>
