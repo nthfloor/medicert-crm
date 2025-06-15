@@ -24,7 +24,9 @@ import {
   UserPlus,
   GraduationCap,
   Menu,
-  X
+  X,
+  Tag,
+  AlertCircle
 } from "lucide-react";
 import {
   Select,
@@ -39,11 +41,62 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+
+// Add coupon type
+interface Coupon {
+  id: string;
+  code: string;
+  discountType: "percentage" | "fixed";
+  discountValue: number;
+  maxUses: number;
+  usedCount: number;
+  expiresAt: string;
+  isActive: boolean;
+}
 
 const ClassBooking = () => {
   const [selectedClass, setSelectedClass] = useState(null);
   const [selectedFilter, setSelectedFilter] = useState("all");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [couponCode, setCouponCode] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState<Coupon | null>(null);
+  const [couponError, setCouponError] = useState("");
+  const [couponLoading, setCouponLoading] = useState(false);
+
+  // Mock coupons data
+  const mockCoupons: Coupon[] = [
+    {
+      id: "1",
+      code: "WELCOME20",
+      discountType: "percentage",
+      discountValue: 20,
+      maxUses: 100,
+      usedCount: 45,
+      expiresAt: "2025-12-31",
+      isActive: true,
+    },
+    {
+      id: "2", 
+      code: "SAVE50",
+      discountType: "fixed",
+      discountValue: 50,
+      maxUses: 50,
+      usedCount: 30,
+      expiresAt: "2025-06-30",
+      isActive: true,
+    },
+    {
+      id: "3",
+      code: "EXPIRED",
+      discountType: "percentage", 
+      discountValue: 10,
+      maxUses: 20,
+      usedCount: 20,
+      expiresAt: "2025-01-01",
+      isActive: false,
+    }
+  ];
 
   // Mock data for class types
   const courseTypes = [
@@ -96,6 +149,7 @@ const ClassBooking = () => {
       enrolled: 16,
       capacity: 20,
       price: "$275",
+      priceValue: 275,
     },
     {
       id: 2,
@@ -110,6 +164,7 @@ const ClassBooking = () => {
       enrolled: 12,
       capacity: 15,
       price: "$250",
+      priceValue: 250,
     },
     {
       id: 3,
@@ -124,6 +179,7 @@ const ClassBooking = () => {
       enrolled: 8,
       capacity: 12,
       price: "$125",
+      priceValue: 125,
     },
     {
       id: 4,
@@ -138,6 +194,7 @@ const ClassBooking = () => {
       enrolled: 5,
       capacity: 12,
       price: "$125",
+      priceValue: 125,
     },
     {
       id: 5,
@@ -152,6 +209,7 @@ const ClassBooking = () => {
       enrolled: 4,
       capacity: 20,
       price: "$275",
+      priceValue: 275,
     },
   ];
 
@@ -161,6 +219,58 @@ const ClassBooking = () => {
   const filteredClasses = selectedFilter === "all" 
     ? upcomingClasses 
     : upcomingClasses.filter(cls => cls.type === selectedFilter);
+
+  const validateCoupon = (code: string): Coupon | null => {
+    const coupon = mockCoupons.find(c => c.code.toLowerCase() === code.toLowerCase());
+    
+    if (!coupon) return null;
+    if (!coupon.isActive) return null;
+    if (coupon.usedCount >= coupon.maxUses) return null;
+    if (new Date(coupon.expiresAt) < new Date()) return null;
+    
+    return coupon;
+  };
+
+  const applyCoupon = () => {
+    setCouponLoading(true);
+    setCouponError("");
+    
+    // Simulate API call
+    setTimeout(() => {
+      const validCoupon = validateCoupon(couponCode);
+      
+      if (validCoupon) {
+        setAppliedCoupon(validCoupon);
+        setCouponError("");
+      } else {
+        setAppliedCoupon(null);
+        setCouponError("Invalid or expired coupon code");
+      }
+      
+      setCouponLoading(false);
+    }, 500);
+  };
+
+  const removeCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponCode("");
+    setCouponError("");
+  };
+
+  const calculateDiscount = (originalPrice: number, coupon: Coupon | null): number => {
+    if (!coupon) return 0;
+    
+    if (coupon.discountType === "percentage") {
+      return originalPrice * (coupon.discountValue / 100);
+    } else {
+      return Math.min(coupon.discountValue, originalPrice);
+    }
+  };
+
+  const calculateFinalPrice = (originalPrice: number, coupon: Coupon | null): number => {
+    const discount = calculateDiscount(originalPrice, coupon);
+    return originalPrice - discount;
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -516,7 +626,71 @@ const ClassBooking = () => {
                     </SelectContent>
                   </Select>
                 </div>
+
+                {/* Coupon Section */}
+                <div className="space-y-4">
+                  <div className="flex items-center space-x-2">
+                    <Tag className="w-4 h-4 text-gray-500" />
+                    <Label htmlFor="coupon">Coupon Code</Label>
+                  </div>
+                  
+                  {!appliedCoupon ? (
+                    <div className="flex space-x-2">
+                      <Input
+                        id="coupon"
+                        placeholder="Enter coupon code"
+                        value={couponCode}
+                        onChange={(e) => setCouponCode(e.target.value)}
+                        className="border-gray-200"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={applyCoupon}
+                        disabled={!couponCode.trim() || couponLoading}
+                        className="border-gray-200"
+                      >
+                        {couponLoading ? "Applying..." : "Apply"}
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <CheckCircle className="w-4 h-4 text-green-600" />
+                          <span className="text-sm font-medium text-green-800">
+                            Coupon "{appliedCoupon.code}" applied
+                          </span>
+                        </div>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={removeCoupon}
+                          className="text-green-600 hover:text-green-700"
+                        >
+                          Remove
+                        </Button>
+                      </div>
+                      <p className="text-xs text-green-600 mt-1">
+                        {appliedCoupon.discountType === "percentage"
+                          ? `${appliedCoupon.discountValue}% discount`
+                          : `$${appliedCoupon.discountValue} off`}
+                      </p>
+                    </div>
+                  )}
+
+                  {couponError && (
+                    <Alert className="border-red-200 bg-red-50">
+                      <AlertCircle className="h-4 w-4 text-red-600" />
+                      <AlertDescription className="text-red-700">
+                        {couponError}
+                      </AlertDescription>
+                    </Alert>
+                  )}
+                </div>
                 
+                {/* Updated pricing section */}
                 <div className="pt-4 border-t border-gray-200 space-y-4">
                   <div className="flex items-center justify-between bg-gray-50 p-4 rounded-lg">
                     <div>
@@ -531,15 +705,33 @@ const ClassBooking = () => {
                       {selectedClass.price}
                     </div>
                   </div>
+
+                  {appliedCoupon && (
+                    <div className="flex items-center justify-between text-green-600">
+                      <div className="text-sm">
+                        Coupon Discount ({appliedCoupon.code})
+                      </div>
+                      <div className="text-sm font-medium">
+                        -${calculateDiscount(selectedClass.priceValue, appliedCoupon).toFixed(2)}
+                      </div>
+                    </div>
+                  )}
                   
                   <div className="flex items-center justify-between">
                     <div className="text-lg font-bold text-gray-900">Total</div>
-                    <div className="text-lg font-bold text-gray-900">{selectedClass.price}</div>
+                    <div className="text-lg font-bold text-gray-900">
+                      ${calculateFinalPrice(selectedClass.priceValue, appliedCoupon).toFixed(2)}
+                    </div>
                   </div>
                 </div>
               </CardContent>
               <CardFooter className="flex justify-between border-t border-gray-100 p-6">
-                <Button variant="outline" className="border-gray-200" onClick={() => setSelectedClass(null)}>
+                <Button variant="outline" className="border-gray-200" onClick={() => {
+                  setSelectedClass(null);
+                  setAppliedCoupon(null);
+                  setCouponCode("");
+                  setCouponError("");
+                }}>
                   Cancel
                 </Button>
                 <Button className="bg-indigo-600 hover:bg-indigo-700 text-white">

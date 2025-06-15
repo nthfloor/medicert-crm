@@ -20,6 +20,7 @@ import ClassBooking from "./pages/ClassBooking";
 import Login from "./pages/Login";
 import StudentRegistration from "./pages/StudentRegistration";
 import InstructorRegistration from "./pages/InstructorRegistration";
+import CouponManagement from "./pages/CouponManagement";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -49,6 +50,7 @@ const App = () => (
             <Route path="students/:id/events" element={<StudentEventManagement />} />
             <Route path="calendar" element={<Calendar />} />
             <Route path="billing" element={<Billing />} />
+            <Route path="coupons" element={<CouponManagement />} />
             <Route path="settings" element={<Settings />} />
           </Route>
           <Route path="*" element={<NotFound />} />
